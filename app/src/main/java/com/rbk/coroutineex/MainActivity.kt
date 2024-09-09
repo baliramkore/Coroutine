@@ -10,7 +10,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,10 +29,33 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-       CoroutineScope(Dispatchers.IO).launch {
+        //understanding how to switch between scopes inside coroutine withContext
+         val mainscope=CoroutineScope(Dispatchers.Main)
+        val backgroundScope=CoroutineScope(Dispatchers.IO)
+
+        mainscope.launch {
+            //coroutineContext variable accessible from coroutine scope or suspending function
+            Log.d("TAG","Using the ${coroutineContext}")
+
+            //switching to IO Dispatchers using withCOntext
+            withContext(Dispatchers.IO){
+                Log.d("TAG","Using the ${coroutineContext}")
+                Log.d("TAG","You are in Background Thread")
+                delay(1000)
+            }
+
+            //switching to main dispatchers again
+            Log.d("TAG","Using the ${coroutineContext}")
+
+        }
+
+
+
+
+/*       scope.launch {
 
            downloadBigFile()
-       }
+       }*/
     }
 
     private fun downloadBigFile() {
